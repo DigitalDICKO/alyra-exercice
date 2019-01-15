@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Programme PILE</h2>
+<p>PILE</p>
+
+<script>
+let pile = [];
+let sentence ="suis je Bonjour AFFICHE pile une rien SUPPRIME AFFICHE";
+let tabSentence = sentence.split(" ");
+let i=0;
+while (i< tabSentence.length ) {
+    if (tabSentence[i]=== "AFFICHE") {
+        while (pile.length>0) {
+            console.log(pile.pop());
+        }
+    } else if (tabSentence[i]=== "SUPPRIME") {
+            pile.pop();
+    } else {
+        pile.push(tabSentence[i]);
+    }
+    i++;
+} 
+</script>
+
+</body>
+</html> 
