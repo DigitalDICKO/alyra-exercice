@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+    <meta charset="utf-8" />
+    </title>
+</head>
+<body>
+    <h3>Conversion hexadécimaux</h3>
+    <input type="text" value ="0" id="decimal"><br>
+    <span type="text" id="hexadecimal"></span><br>
+    <button id="convertir">Convertir</button>
+    
+
+<script>
+
+function convertLittleEndianToDec(litEnd) { // suppose nb paire
+    // on determine la taille 
+    longChaine = litEnd.length;
+    console.log("Longueur chaine : " + longChaine);
+    var result=0;
+    var j=0;
+    for (var i = 0; i<longChaine-1; i+=2) {
+        console.log("16 Exp " + j + " = " + Math.pow(16,j));
+        console.log("Octet en cours : " + litEnd.substring(i,i+2));
+        console.log("Resultat du parseInt : " + parseInt(litEnd.substring(i,i+2), 16));
+        result = result + parseInt(litEnd.substring(i,i+2), 16) * Math.pow(16,j);
+        j++;
+    }
+    return result;
+}
+
+function convertVarIntToDeci(nbInt) {
+    // varInt a 3 tailles possibles 0xfd = 2 octets, 0xfe = 4 octets et 0xff = 8 octets 
+    // on determine en premier si la chaine varint debut par 0x ou pas pour définir le champs i de debut du varint
+    var i;
+    var result;
+    if (nbInt.substring(0,2) == "0x") {i=2;} else {i=0;}
+    // on determine la taille du varint
+    debut = nbInt.substring(i,i+2);
+    console.log("debut : " + debut);
+    if (debut == "FD") {
+        i = i + 2;
+        console.log(i);
+        console.log("Varint à convertir FD : " + nbInt.substring(i,i+5));
+        result = convertLittleEndianToDec(nbInt.substring(i,i+5)); // on retourne 2 octets=> 4 caracteres => i+5 
+        } else if (debut == "FE") {
+            i = i + 2;
+            console.log("Varint à convertir FE : " + nbInt.substring(i,i+9));
+            result = convertLittleEndianToDec(nbInt.substring(i,i+9)); // on retourne 4 octets=> 8 caracteres => i+9 
+        } else if (debut == "FF") {
+            i = i + 2;
+            console.log("Varint à convertir : FF " + nbInt.substring(i,i+17));
+            result = convertLittleEndianToDec(nbInt.substring(i,i+17)); // on retourne 8 octets=> 16 caracteres => i+17 
+        } else {
+            console.log("Varint à convertir : " + nbInt.substring(i,i+3));
+            result = convertLittleEndianToDec(nbInt.substring(i,i+3)); // on retourne 1 octets=> 2 caracteres => i+3
+        }
+    return result;
+}
+
+function convertBitsTotarget(chBits) {
+    nbZero = (parseInt(chBits.substring(0,2),16)-3)*2; // nbZero = nb d'octet vide => *2
+    result = chBits.substring(2,8);
+    for (var i=0; i<nbZero; i++) {
+        result = result + "0"; // peu elegant mais on peut decaller en utilisant exposant * 2exp(nbZero)
+    }
+    return result;
+}
+
+function convertDate() {                    // Question de cours date = new Date(4294967298000)
+
+}
+
+/* TEST convertVarIntToDeci
+UserEntry = prompt("Entrez un nombre Little endian: ");
+alert(UserEntry);
+alert(convertVarIntToDeci(UserEntry)); */
+
+// TEST convertBitsTotarget
+UserEntry = prompt("Entrez un champ BITS: ");
+alert(UserEntry);
+alert(convertBitsTotarget(UserEntry)); 
+
+document.getElementById('convertir').addEventListener('click', event => {
+    decimal = document.getElementById('decimal').value
+    document.getElementById('hexadecimal').innerHTML = '0x' + conversion('decimal')
+})
+
+</script>
+
+</body>
+</html> 
